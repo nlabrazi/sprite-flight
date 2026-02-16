@@ -1,0 +1,5 @@
+* text=auto
+*.cs text eol=crlf
+*.json text eol=crlf
+*.unity text eol=crlf
+*.asset text eol=crlf
