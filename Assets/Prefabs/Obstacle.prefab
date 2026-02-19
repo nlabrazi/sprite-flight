@@ -186,7 +186,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6cf610636bc8c1409de6eb1b1180998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Obstacle
-  minSize: 0.5
-  maxSize: 2
+  asteroidSize: 0
+  tinySprites:
+  - {fileID: -5944249128653297893, guid: ecfa438815e30644799dcf53012c44d7, type: 3}
+  - {fileID: -2059301777156014197, guid: 5c5c56b1d9ea25b45a8ffe31327828fa, type: 3}
+  smallSprites:
+  - {fileID: 5098249006986496273, guid: bef88d10335d2db46b8955616b927ff5, type: 3}
+  - {fileID: -1299205367528621936, guid: 1de724b29a57ff04ba0979837103ead9, type: 3}
+  mediumSprites:
+  - {fileID: 4596883188560925386, guid: 1528236b5cc34374da2e5b11783df04e, type: 3}
+  - {fileID: 959803505507294820, guid: e780cba4ddb93da4ab4618ea2a07eca8, type: 3}
+  bigSprites:
+  - {fileID: -2492203099988907705, guid: d8cd21cf49707494cb4f302c3624c826, type: 3}
+  - {fileID: 1474014828341702776, guid: bda030f5516702c47b65a56e8ea7b614, type: 3}
+  tinyScale: 0.5
+  smallScale: 1
+  mediumScale: 1.5
+  bigScale: 2
+  tinyChance: 0.4
+  smallChance: 0.3
+  mediumChance: 0.2
+  bigChance: 0.1
   minSpeed: 50
   maxSpeed: 150
+  maxSpinSpeed: 10
+  bounceEffectPrefab: {fileID: 8511406805266978974, guid: d3c7fc18eeb7531408f7d2499ca4a252, type: 3}
+  boostMultiplier: 2
+  boostDuration: 1

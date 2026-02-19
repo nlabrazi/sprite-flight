@@ -1,75 +1,178 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movement")]
     public float thrustForce = 1f;
     public float maxSpeed = 5f;
+
+    [Header("Visual")]
     public GameObject rocketFlame;
-    Rigidbody2D rb;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public GameObject explosionEffect;
+    public GameObject borderParent;
+    private Button restartButton;
+
+    [Header("Audio")]
+    public AudioClip explosionClip;
+    private AudioSource audioSource;
+
+    [Header("Score")]
+    public float scoreMultiplier = 10f;
+    public UIDocument uiDocument;
+    private Label highScoreText;
+    private const string HIGH_SCORE_KEY = "HIGH_SCORE";
+
+    private Rigidbody2D rb;
+    private Label scoreText;
+
+    private float elapsedTime;
+    private float score;
+    private bool isDead = false;
+
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        var root = uiDocument.rootVisualElement;
+
+        scoreText = root.Q<Label>("ScoreText");
+        highScoreText = root.Q<Label>("HighScoreText");
+        restartButton = root.Q<Button>("RestartButton");
+
+        if (restartButton != null)
+            restartButton.style.display = DisplayStyle.None;
+        restartButton.clicked += ReloadScene;
+
+        int highScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+        if (highScoreText != null)
+            highScoreText.text = $"High Score: {highScore}";
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // 1) Lire le stick de la manette (si une manette existe)
-        Vector2 stick = Vector2.zero;
+        UpdateScore();
+        MoveRocket();
+    }
+
+    void UpdateScore()
+    {
+        elapsedTime += Time.deltaTime;
+        score = Mathf.FloorToInt(elapsedTime * scoreMultiplier);
+
+        if (scoreText != null)
+            scoreText.text = $"Score: {score}";
+    }
+
+    void MoveRocket()
+    {
+        if (rb == null)
+            return;
+
         bool hasGamepad = Gamepad.current != null;
-        if (hasGamepad)
-            stick = Gamepad.current.leftStick.ReadValue();
+        Vector2 stick = hasGamepad ? Gamepad.current.leftStick.ReadValue() : Vector2.zero;
 
-        // 2) Si le stick bouge un peu, on l’utilise comme direction
-        float deadzone = 0.2f; // évite le tremblement du stick
-        bool stickActive = stick.magnitude > deadzone;
+        Vector2 direction = GetDirection(stick, hasGamepad);
 
-        Vector2 direction;
+        bool thrustHeld =
+            (Mouse.current != null && Mouse.current.leftButton.isPressed) ||
+            (hasGamepad && Gamepad.current.buttonSouth.isPressed);
 
-        if (stickActive)
-        {
-            direction = stick.normalized;
-        }
-        else
-        {
-            // Sinon on garde la souris (comme avant)
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.value);
-            direction = (mousePos - transform.position).normalized;
-        }
+        bool thrustPressed =
+            (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
+            (hasGamepad && Gamepad.current.buttonSouth.wasPressedThisFrame);
 
-        // 3) Détecter la poussée :
-        // - souris clic gauche
-        // - OU manette bouton A
-        bool thrustHeld = Mouse.current.leftButton.isPressed
-                          || (hasGamepad && Gamepad.current.buttonSouth.isPressed);
+        bool thrustReleased =
+            (Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame) ||
+            (hasGamepad && Gamepad.current.buttonSouth.wasReleasedThisFrame);
 
-        bool thrustPressed = Mouse.current.leftButton.wasPressedThisFrame
-                             || (hasGamepad && Gamepad.current.buttonSouth.wasPressedThisFrame);
-
-        bool thrustReleased = Mouse.current.leftButton.wasReleasedThisFrame
-                              || (hasGamepad && Gamepad.current.buttonSouth.wasReleasedThisFrame);
-
-        // 4) Appliquer la poussée + rotation si on pousse
         if (thrustHeld)
         {
             transform.up = direction;
             rb.AddForce(direction * thrustForce);
 
             if (rb.linearVelocity.magnitude > maxSpeed)
-            {
                 rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
-            }
         }
 
-        // 5) Flamme ON/OFF
-        if (thrustPressed) rocketFlame.SetActive(true);
-        else if (thrustReleased) rocketFlame.SetActive(false);
+        if (rocketFlame != null)
+        {
+            if (thrustPressed) rocketFlame.SetActive(true);
+            else if (thrustReleased) rocketFlame.SetActive(false);
+        }
+    }
+
+    void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    Vector2 GetDirection(Vector2 stick, bool hasGamepad)
+    {
+        const float deadzone = 0.2f;
+
+        if (hasGamepad && stick.magnitude > deadzone)
+            return stick.normalized;
+
+        if (Mouse.current == null || Camera.main == null)
+            return transform.up;
+
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        return (mousePos - transform.position).normalized;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Destroy(gameObject);
+        if (isDead) return;
+        isDead = true;
+        if (borderParent != null)
+            // borders.SetActive(false);
+            borderParent.SetActive(false);
+
+        int currentHigh = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+        int currentScore = Mathf.FloorToInt(score);
+
+        if (currentScore > currentHigh)
+        {
+            PlayerPrefs.SetInt(HIGH_SCORE_KEY, currentScore);
+            PlayerPrefs.Save();
+
+            if (highScoreText != null)
+                highScoreText.text = $"High Score: {currentScore}";
+        }
+
+        // Son
+        if (explosionClip != null)
+            audioSource.PlayOneShot(explosionClip);
+
+        // Explosion visuelle
+        if (explosionEffect != null)
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+
+        // UI
+        if (restartButton != null)
+            restartButton.style.display = DisplayStyle.Flex;
+
+        // Stop gameplay
+        foreach (var col in GetComponentsInChildren<Collider2D>())
+            col.enabled = false;
+
+        foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
+            sr.enabled = false;
+
+        if (rb != null)
+            rb.simulated = false;
+
+        Destroy(gameObject, 1f);
     }
 }
