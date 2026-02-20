@@ -17,7 +17,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip explosionClip;
-    private AudioSource audioSource;
+    public AudioClip thrustClip;                // son court (ex: sfx-SpaceshipEngineLight)
+    [Range(0f, 1f)] public float thrustVolume = 0.35f;
+
+    // 2 sources séparées : une pour l'explosion, une pour le thrust
+    private AudioSource explosionSource;
+    private AudioSource thrustSfxSource;
 
     [Header("Score")]
     public float scoreMultiplier = 10f;
@@ -32,11 +37,11 @@ public class PlayerController : MonoBehaviour
     private float score;
     private bool isDead = false;
 
-
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
+        // ================= UI =================
         var root = uiDocument.rootVisualElement;
 
         scoreText = root.Q<Label>("ScoreText");
@@ -44,19 +49,25 @@ public class PlayerController : MonoBehaviour
         restartButton = root.Q<Button>("RestartButton");
 
         if (restartButton != null)
+        {
             restartButton.style.display = DisplayStyle.None;
-        restartButton.clicked += ReloadScene;
+            restartButton.clicked += ReloadScene;
+        }
 
         int highScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
         if (highScoreText != null)
             highScoreText.text = $"High Score: {highScore}";
 
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
+        // ================= AUDIO =================
+        explosionSource = gameObject.AddComponent<AudioSource>();
+        explosionSource.playOnAwake = false;
+        explosionSource.loop = false;
+        explosionSource.spatialBlend = 0f; // 2D
 
-        audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f;
+        thrustSfxSource = gameObject.AddComponent<AudioSource>();
+        thrustSfxSource.playOnAwake = false;
+        thrustSfxSource.loop = false;
+        thrustSfxSource.spatialBlend = 0f; // 2D
     }
 
     void Update()
@@ -76,7 +87,7 @@ public class PlayerController : MonoBehaviour
 
     void MoveRocket()
     {
-        if (rb == null)
+        if (rb == null || isDead)
             return;
 
         bool hasGamepad = Gamepad.current != null;
@@ -103,6 +114,17 @@ public class PlayerController : MonoBehaviour
 
             if (rb.linearVelocity.magnitude > maxSpeed)
                 rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
+        }
+
+        // --- SON COURT : joué à l'appui, coupé au relâche (pour éviter qu'il continue pendant la glisse)
+        if (thrustPressed && thrustClip != null && thrustSfxSource != null)
+        {
+            thrustSfxSource.PlayOneShot(thrustClip, thrustVolume);
+        }
+
+        if (thrustReleased && thrustSfxSource != null)
+        {
+            thrustSfxSource.Stop();
         }
 
         if (rocketFlame != null)
@@ -135,8 +157,12 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
+
+        // coupe immédiatement le son de thrust
+        if (thrustSfxSource != null)
+            thrustSfxSource.Stop();
+
         if (borderParent != null)
-            // borders.SetActive(false);
             borderParent.SetActive(false);
 
         int currentHigh = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
@@ -151,9 +177,9 @@ public class PlayerController : MonoBehaviour
                 highScoreText.text = $"High Score: {currentScore}";
         }
 
-        // Son
-        if (explosionClip != null)
-            audioSource.PlayOneShot(explosionClip);
+        // Son explosion (indépendant du thrust)
+        if (explosionClip != null && explosionSource != null)
+            explosionSource.PlayOneShot(explosionClip);
 
         // Explosion visuelle
         if (explosionEffect != null)

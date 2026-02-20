@@ -55,7 +55,6 @@
   <ItemGroup>
     <None Include="Assets\UI\UILayout.uxml" />
     <None Include="Assets\SpaceShooterRedux\license.txt" />
-    <None Include="Assets\SpaceShooterRedux\Spritesheet\sheet.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

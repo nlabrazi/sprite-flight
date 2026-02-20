@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1727835597158782398}
   - component: {fileID: 492751158077970018}
   - component: {fileID: 636624232654474140}
-  - component: {fileID: 7563373669093379709}
+  - component: {fileID: 195955026756846467}
   - component: {fileID: 1958710968860692583}
   m_Layer: 0
   m_Name: Obstacle
@@ -121,7 +121,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &7563373669093379709
+--- !u!60 &195955026756846467
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,10 +199,10 @@ MonoBehaviour:
   bigSprites:
   - {fileID: -2492203099988907705, guid: d8cd21cf49707494cb4f302c3624c826, type: 3}
   - {fileID: 1474014828341702776, guid: bda030f5516702c47b65a56e8ea7b614, type: 3}
-  tinyScale: 0.5
-  smallScale: 1
-  mediumScale: 1.5
-  bigScale: 2
+  tinyScale: 2
+  smallScale: 3
+  mediumScale: 4
+  bigScale: 5
   tinyChance: 0.4
   smallChance: 0.3
   mediumChance: 0.2

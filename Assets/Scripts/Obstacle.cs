@@ -21,12 +21,12 @@ public class Obstacle : MonoBehaviour
     public Sprite[] bigSprites;
 
     [Header("Size Scales")]
-    public float tinyScale = 0.5f;
-    public float smallScale = 1.0f;
+    public float tinyScale = 0.9f;
+    public float smallScale = 1.2f;
     public float mediumScale = 1.5f;
     public float bigScale = 2.0f;
 
-    [Header("Weighted Spawn Chances (sum doesn't have to be 1)")]
+    [Header("Weighted Spawn Chances")]
     [Range(0f, 1f)] public float tinyChance = 0.40f;
     [Range(0f, 1f)] public float smallChance = 0.30f;
     [Range(0f, 1f)] public float mediumChance = 0.20f;
@@ -50,20 +50,22 @@ public class Obstacle : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
+    private PolygonCollider2D poly;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        poly = GetComponent<PolygonCollider2D>();
     }
 
     void Start()
     {
-        if (rb == null)
+        if (rb == null || sr == null)
             return;
 
         asteroidSize = PickWeightedSize();
-        ApplySizeAndSprite();
+        ApplySizeAndSprite();      // <-- choisit sprite + scale + rebuild collider
 
         ApplyRandomMovement();
         ApplyRandomSpin();
@@ -72,10 +74,7 @@ public class Obstacle : MonoBehaviour
     AsteroidSize PickWeightedSize()
     {
         float total = tinyChance + smallChance + mediumChance + bigChance;
-
-        // Sécurité: si tout est à 0, fallback
-        if (total <= 0f)
-            return AsteroidSize.Small;
+        if (total <= 0f) return AsteroidSize.Small;
 
         float roll = Random.value * total;
 
@@ -92,12 +91,8 @@ public class Obstacle : MonoBehaviour
 
     void ApplySizeAndSprite()
     {
-        if (sr == null)
-            return;
-
         float scale;
         Sprite[] pool;
-
         switch (asteroidSize)
         {
             case AsteroidSize.Tiny:
@@ -126,10 +121,36 @@ public class Obstacle : MonoBehaviour
                 break;
         }
 
-        transform.localScale = new Vector3(scale, scale, 1f);
-
+        // 1) Choisir le sprite d'abord
         if (pool != null && pool.Length > 0)
             sr.sprite = pool[Random.Range(0, pool.Length)];
+
+        // 2) Appliquer le scale
+        transform.localScale = new Vector3(scale, scale, 1f);
+
+        // 3) Rebuild du PolygonCollider pour matcher le sprite actuel
+        RefreshPolygonCollider();
+    }
+
+    void RefreshPolygonCollider()
+    {
+        if (poly == null || sr == null || sr.sprite == null)
+            return;
+
+        var sprite = sr.sprite;
+        int shapeCount = sprite.GetPhysicsShapeCount();
+        if (shapeCount == 0)
+            return;
+
+        poly.pathCount = shapeCount;
+
+        var points = new System.Collections.Generic.List<Vector2>(64);
+        for (int i = 0; i < shapeCount; i++)
+        {
+            points.Clear();
+            sprite.GetPhysicsShape(i, points);
+            poly.SetPath(i, points);
+        }
     }
 
     void ApplyRandomMovement()
