@@ -1,0 +1,36 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <!-- Shared UI theme -->
+    <Style src="project://database/Assets/UI/Theme.uss?fileID=7433441132597879392&amp;guid=cb63a9a4ca481894f8888bf367da3ca6&amp;type=3#Theme"/>
+    <!-- Main menu layout -->
+    <Style src="project://database/Assets/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=3dd6be8b3da7ae147952c1ceed010e9e&amp;type=3#MainMenu"/>
+
+    <!-- Main menu root -->
+    <ui:VisualElement name="Root" class="root">
+        <!-- Background image container -->
+        <ui:VisualElement name="Background" class="bg"/>
+        <!-- Centered content container -->
+        <ui:VisualElement name="Content" class="content">
+            <!-- Game title -->
+            <ui:Label text="SPRITE FLIGHT" name="GameTitle" class="title"/>
+            <!-- Main actions panel -->
+            <ui:VisualElement name="MenuPanel" class="ui-panel menu-panel">
+                <ui:Button text="Play" name="PlayButton" class="ui-btn menu-button"/>
+                <ui:Button text="High Scores" name="HighScoresButton" class="ui-btn menu-button"/>
+                <ui:Button text="Quit" name="QuitButton" class="ui-btn menu-button"/>
+            </ui:VisualElement>
+
+            <!-- High scores panel -->
+            <ui:VisualElement name="HighScoresPanel" class="ui-panel highscores-panel is-hidden">
+                <ui:Label text="TOP 10" name="HighScoresTitle" class="subtitle"/>
+
+                <ui:VisualElement name="HighScoresBody" class="highscores-body">
+                    <ui:ScrollView name="ScoresScroll" class="scores-list"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="HighScoresFooter" class="highscores-footer">
+                    <ui:Button text="Back" name="BackButton" class="ui-btn menu-button"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

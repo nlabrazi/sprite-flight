@@ -1,0 +1,76 @@
+/* Main actions panel */
+.menu-panel {
+    width: 560px;
+}
+
+/* Main menu buttons */
+.menu-button {
+    min-width: 280px;
+}
+
+/* High scores panel container */
+.highscores-panel {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 78%;
+    max-width: 920px;
+    max-height: 650px;
+}
+
+/* High scores body container */
+.highscores-body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 260px;
+}
+
+/* High scores footer container */
+.highscores-footer {
+    flex-shrink: 0;
+    padding-top: 12px;
+    align-items: center;
+}
+
+/* Scrollable list wrapper */
+.scores-list {
+    width: 100%;
+    height: 280px;
+    min-height: 280px;
+    max-height: 280px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 10px;
+    padding-bottom: 18px;
+    background-color: rgba(0, 0, 0, 0.22);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+}
+
+/* Scroll viewport clipping */
+.scores-list .unity-scroll-view__viewport {
+    overflow: hidden;
+}
+
+/* Scroll content padding */
+.scores-list .unity-scroll-view__content-container {
+    padding-bottom: 12px;
+}
+
+/* High scores entry text */
+.scores-list Label {
+    color: rgb(240, 244, 255);
+    font-size: 18px;
+    -unity-font-style: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 1px;
+}

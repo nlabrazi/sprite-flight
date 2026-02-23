@@ -12,66 +12,68 @@ public class Obstacle : MonoBehaviour
     }
 
     [Header("Asteroid Category (auto)")]
-    public AsteroidSize asteroidSize;
+    [SerializeField] private AsteroidSize asteroidSize;
 
     [Header("Asteroid Sprites")]
-    public Sprite[] tinySprites;
-    public Sprite[] smallSprites;
-    public Sprite[] mediumSprites;
-    public Sprite[] bigSprites;
+    [SerializeField] private Sprite[] tinySprites;
+    [SerializeField] private Sprite[] smallSprites;
+    [SerializeField] private Sprite[] mediumSprites;
+    [SerializeField] private Sprite[] bigSprites;
 
     [Header("Size Scales")]
-    public float tinyScale = 0.9f;
-    public float smallScale = 1.2f;
-    public float mediumScale = 1.5f;
-    public float bigScale = 2.0f;
+    [SerializeField] private float tinyScale = 0.9f;
+    [SerializeField] private float smallScale = 1.2f;
+    [SerializeField] private float mediumScale = 1.5f;
+    [SerializeField] private float bigScale = 2.0f;
 
     [Header("Weighted Spawn Chances")]
-    [Range(0f, 1f)] public float tinyChance = 0.40f;
-    [Range(0f, 1f)] public float smallChance = 0.30f;
-    [Range(0f, 1f)] public float mediumChance = 0.20f;
-    [Range(0f, 1f)] public float bigChance = 0.10f;
+    [SerializeField, Range(0f, 1f)] private float tinyChance = 0.40f;
+    [SerializeField, Range(0f, 1f)] private float smallChance = 0.30f;
+    [SerializeField, Range(0f, 1f)] private float mediumChance = 0.20f;
+    [SerializeField, Range(0f, 1f)] private float bigChance = 0.10f;
 
     [Header("Movement")]
-    public float minSpeed = 50f;
-    public float maxSpeed = 150f;
+    [SerializeField] private float minSpeed = 50f;
+    [SerializeField] private float maxSpeed = 150f;
 
     [Header("Rotation")]
-    public float maxSpinSpeed = 10f;
+    [SerializeField] private float maxSpinSpeed = 10f;
 
     [Header("Effects")]
-    public GameObject bounceEffectPrefab;
+    [SerializeField] private GameObject bounceEffectPrefab;
 
     [Header("Boost (on Wall hit)")]
-    public float boostMultiplier = 2f;
-    public float boostDuration = 1f;
+    [SerializeField] private float boostMultiplier = 2f;
+    [SerializeField] private float boostDuration = 1f;
 
-    private bool isBoosting = false;
+    // Temporary boost state
+    private bool isBoosting;
 
+    // Cached components
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private PolygonCollider2D poly;
 
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         poly = GetComponent<PolygonCollider2D>();
     }
 
-    void Start()
+    private void Start()
     {
         if (rb == null || sr == null)
             return;
 
         asteroidSize = PickWeightedSize();
-        ApplySizeAndSprite();      // <-- choisit sprite + scale + rebuild collider
-
+        ApplySizeAndSprite();
         ApplyRandomMovement();
         ApplyRandomSpin();
     }
 
-    AsteroidSize PickWeightedSize()
+    // Pick asteroid size from weighted probabilities
+    private AsteroidSize PickWeightedSize()
     {
         float total = tinyChance + smallChance + mediumChance + bigChance;
         if (total <= 0f) return AsteroidSize.Small;
@@ -89,7 +91,8 @@ public class Obstacle : MonoBehaviour
         return AsteroidSize.Big;
     }
 
-    void ApplySizeAndSprite()
+    // Set sprite, scale, and collider shape
+    private void ApplySizeAndSprite()
     {
         float scale;
         Sprite[] pool;
@@ -121,18 +124,15 @@ public class Obstacle : MonoBehaviour
                 break;
         }
 
-        // 1) Choisir le sprite d'abord
         if (pool != null && pool.Length > 0)
             sr.sprite = pool[Random.Range(0, pool.Length)];
 
-        // 2) Appliquer le scale
         transform.localScale = new Vector3(scale, scale, 1f);
-
-        // 3) Rebuild du PolygonCollider pour matcher le sprite actuel
         RefreshPolygonCollider();
     }
 
-    void RefreshPolygonCollider()
+    // Rebuild polygon collider from sprite physics shape
+    private void RefreshPolygonCollider()
     {
         if (poly == null || sr == null || sr.sprite == null)
             return;
@@ -153,23 +153,24 @@ public class Obstacle : MonoBehaviour
         }
     }
 
-    void ApplyRandomMovement()
+    // Apply initial random velocity
+    private void ApplyRandomMovement()
     {
         float size = transform.localScale.x;
-
         float speed = Random.Range(minSpeed, maxSpeed) / size;
         Vector2 direction = Random.insideUnitCircle.normalized;
-
         rb.AddForce(direction * speed);
     }
 
-    void ApplyRandomSpin()
+    // Apply initial random angular velocity
+    private void ApplyRandomSpin()
     {
         float spin = Random.Range(-maxSpinSpeed, maxSpinSpeed);
         rb.AddTorque(spin);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    // Handle wall bounce feedback and temporary boost
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!collision.collider.CompareTag("Wall"))
             return;
@@ -185,7 +186,8 @@ public class Obstacle : MonoBehaviour
             StartCoroutine(BoostCoroutine());
     }
 
-    IEnumerator BoostCoroutine()
+    // Apply short speed boost after wall hit
+    private IEnumerator BoostCoroutine()
     {
         if (rb == null)
             yield break;
