@@ -50,12 +50,27 @@
     left: 50%;
     top: 55%;
     translate: -50% -50%;
+    margin-top: 0;
+}
+
+/* Restart button anchor */
+.restart-btn {
+    top: 55%;
+    translate: -50% -50px;
 }
 
 /* Main menu button offset */
 .menu-btn {
     top: 55%;
     translate: -50% 30px;
+    margin-top: 0;
+}
+
+/* Resume button offset */
+.resume-btn {
+    top: 55%;
+    translate: -50% -130px;
+    margin-top: 0;
 }
 
 /* Name entry panel */

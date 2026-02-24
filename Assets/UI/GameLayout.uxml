@@ -1,29 +1,15 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns:ui="UnityEngine.UIElements"
-         xmlns:uie="UnityEditor.UIElements"
-         noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
-         editor-extension-mode="False">
-
-    <!-- Shared UI theme -->
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Theme.uss?fileID=7433441132597879392&amp;guid=cb63a9a4ca481894f8888bf367da3ca6&amp;type=3#Theme"/>
-    <!-- In-game HUD layout -->
     <Style src="project://database/Assets/UI/GameLayout.uss?fileID=7433441132597879392&amp;guid=cbe1457a2e932f94fa6542612dd378ee&amp;type=3#GameLayout"/>
-
-    <!-- In-game HUD root -->
     <ui:VisualElement name="HudRoot" class="hud-root">
-        <!-- Score labels -->
         <ui:Label text="Score: 0" name="ScoreText" class="hud-label hud-left"/>
         <ui:Label text="High Score: 0" name="HighScoreText" class="hud-label hud-right"/>
-
-        <!-- End game actions -->
-        <ui:Button text="Restart" name="RestartButton" class="ui-btn hud-center"/>
+        <ui:Button text="Resume" name="ResumeButton" class="ui-btn hud-center resume-btn"/>
+        <ui:Button text="Restart" name="RestartButton" class="ui-btn hud-center restart-btn"/>
         <ui:Button text="Main Menu" name="MainMenuButton" class="ui-btn hud-center menu-btn"/>
-
-        <!-- Name entry modal -->
         <ui:VisualElement name="NamePanel" class="name-panel is-hidden">
             <ui:Label text="TOP 10! ENTER YOUR NAME" name="NameTitle" class="subtitle"/>
             <ui:TextField name="NameInput" value="AAA" class="name-input"/>
-
             <ui:VisualElement class="row">
                 <ui:Button text="Save" name="SaveScoreButton" class="ui-btn small-btn"/>
                 <ui:Button text="Skip" name="SkipSaveButton" class="ui-btn small-btn"/>

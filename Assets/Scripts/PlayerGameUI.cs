@@ -8,6 +8,7 @@ public class PlayerGameUI
     private readonly Label highScoreText;
 
     // Game over buttons
+    private readonly Button resumeButton;
     private readonly Button restartButton;
     private readonly Button mainMenuButton;
 
@@ -21,6 +22,7 @@ public class PlayerGameUI
     {
         scoreText = root.Q<Label>("ScoreText");
         highScoreText = root.Q<Label>("HighScoreText");
+        resumeButton = root.Q<Button>("ResumeButton");
         restartButton = root.Q<Button>("RestartButton");
         mainMenuButton = root.Q<Button>("MainMenuButton");
         namePanel = root.Q<VisualElement>("NamePanel");
@@ -39,8 +41,9 @@ public class PlayerGameUI
     }
 
     // Bind gameplay UI actions
-    public void BindEvents(Action onRestart, Action onMainMenu, Action onSave, Action onSkip)
+    public void BindEvents(Action onResume, Action onRestart, Action onMainMenu, Action onSave, Action onSkip)
     {
+        if (resumeButton != null) resumeButton.clicked += onResume;
         if (restartButton != null) restartButton.clicked += onRestart;
         if (mainMenuButton != null) mainMenuButton.clicked += onMainMenu;
         if (saveScoreButton != null) saveScoreButton.clicked += onSave;
@@ -48,8 +51,9 @@ public class PlayerGameUI
     }
 
     // Unbind gameplay UI actions
-    public void UnbindEvents(Action onRestart, Action onMainMenu, Action onSave, Action onSkip)
+    public void UnbindEvents(Action onResume, Action onRestart, Action onMainMenu, Action onSave, Action onSkip)
     {
+        if (resumeButton != null) resumeButton.clicked -= onResume;
         if (restartButton != null) restartButton.clicked -= onRestart;
         if (mainMenuButton != null) mainMenuButton.clicked -= onMainMenu;
         if (saveScoreButton != null) saveScoreButton.clicked -= onSave;
@@ -80,6 +84,16 @@ public class PlayerGameUI
     public void ShowGameOverButtons(bool visible)
     {
         var display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        if (resumeButton != null) resumeButton.style.display = DisplayStyle.None;
+        if (restartButton != null) restartButton.style.display = display;
+        if (mainMenuButton != null) mainMenuButton.style.display = display;
+    }
+
+    // Show or hide pause action buttons
+    public void ShowPauseButtons(bool visible)
+    {
+        var display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        if (resumeButton != null) resumeButton.style.display = display;
         if (restartButton != null) restartButton.style.display = display;
         if (mainMenuButton != null) mainMenuButton.style.display = display;
     }

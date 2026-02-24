@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class MainMenuController : MonoBehaviour
 {
@@ -13,12 +16,14 @@ public class MainMenuController : MonoBehaviour
     // Menu containers
     private VisualElement menuPanel;
     private VisualElement highScoresPanel;
+    private Label gameTitle;
 
     // Menu buttons
     private Button playButton;
     private Button highScoresButton;
     private Button quitButton;
     private Button backButton;
+    private Button creditsButton;
 
     // High scores list
     private ScrollView scoresScroll;
@@ -30,11 +35,13 @@ public class MainMenuController : MonoBehaviour
 
         menuPanel = root.Q<VisualElement>("MenuPanel");
         highScoresPanel = root.Q<VisualElement>("HighScoresPanel");
+        gameTitle = root.Q<Label>("GameTitle");
 
         playButton = root.Q<Button>("PlayButton");
         highScoresButton = root.Q<Button>("HighScoresButton");
         quitButton = root.Q<Button>("QuitButton");
         backButton = root.Q<Button>("BackButton");
+        creditsButton = root.Q<Button>("CreditsButton");
 
         scoresScroll = root.Q<ScrollView>("ScoresScroll");
 
@@ -45,6 +52,7 @@ public class MainMenuController : MonoBehaviour
         if (highScoresButton != null) highScoresButton.clicked += ShowHighScores;
         if (quitButton != null) quitButton.clicked += OnQuit;
         if (backButton != null) backButton.clicked += ShowMenu;
+        if (creditsButton != null) creditsButton.clicked += OpenCredits;
 
         ShowMenu();
     }
@@ -55,6 +63,7 @@ public class MainMenuController : MonoBehaviour
         if (highScoresButton != null) highScoresButton.clicked -= ShowHighScores;
         if (quitButton != null) quitButton.clicked -= OnQuit;
         if (backButton != null) backButton.clicked -= ShowMenu;
+        if (creditsButton != null) creditsButton.clicked -= OpenCredits;
     }
 
     private void ApplyBackground(VisualElement root)
@@ -78,16 +87,26 @@ public class MainMenuController : MonoBehaviour
     private void OnQuit()
     {
         Application.Quit();
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
+    }
+
+    private void OpenCredits()
+    {
+        Application.OpenURL("https://nabil-labrazi.fr");
     }
 
     private void ShowMenu()
     {
+        if (gameTitle != null) gameTitle.text = "SPRITE FLIGHT";
         if (menuPanel != null) menuPanel.style.display = DisplayStyle.Flex;
         if (highScoresPanel != null) highScoresPanel.style.display = DisplayStyle.None;
     }
 
     private void ShowHighScores()
     {
+        if (gameTitle != null) gameTitle.text = "SCOREBOARD";
         if (menuPanel != null) menuPanel.style.display = DisplayStyle.None;
         if (highScoresPanel != null) highScoresPanel.style.display = DisplayStyle.Flex;
 

@@ -18,6 +18,12 @@ public class StarfieldSpawner : MonoBehaviour
     [SerializeField] private float z = 0f;
     [SerializeField] private int sortingOrder = -500;
 
+    [Header("Retro Colors")]
+    [SerializeField] private Color colorA = new Color(0.25f, 1f, 0.95f, 1f);
+    [SerializeField] private Color colorB = new Color(1f, 0.35f, 0.85f, 1f);
+    [SerializeField] private Color colorC = new Color(1f, 0.95f, 0.35f, 1f);
+    [SerializeField] private Color colorD = new Color(0.55f, 0.75f, 1f, 1f);
+
     // Build and configure star layers
     private void Awake()
     {
@@ -26,8 +32,8 @@ public class StarfieldSpawner : MonoBehaviour
         var small = CreateOrGetSystem("Stars_Small");
         var big = CreateOrGetSystem("Stars_Big");
 
-        ConfigureStars(small, smallStarCount, smallSpeed, 0.02f, 0.07f, stretch: 0.6f);
-        ConfigureStars(big, bigStarCount, bigSpeed, 0.05f, 0.14f, stretch: 1.2f);
+        ConfigureStars(small, smallStarCount, smallSpeed, 0.010f, 0.030f, stretch: 0.45f);
+        ConfigureStars(big, bigStarCount, bigSpeed, 0.016f, 0.055f, stretch: 0.85f);
     }
 
     // Create child particle system or reuse existing one
@@ -62,19 +68,24 @@ public class StarfieldSpawner : MonoBehaviour
         float stretch
     )
     {
+        float safeSpeed = Mathf.Max(0.01f, speed);
+        float travelDistance = height + 2f;
+        float lifetime = travelDistance / safeSpeed;
+        float emissionRate = count / Mathf.Max(0.1f, lifetime);
+
         var main = ps.main;
         main.loop = true;
         main.playOnAwake = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.maxParticles = count;
-        main.startLifetime = 999f;
+        main.startLifetime = lifetime;
         main.startSpeed = 0f;
         main.startSize = new ParticleSystem.MinMaxCurve(minSize, maxSize);
-        main.startColor = new Color(0.92f, 0.97f, 1f, 0.9f);
+        main.startColor = new Color(1f, 1f, 1f, 0.9f);
 
         var emission = ps.emission;
         emission.enabled = true;
-        emission.rateOverTime = 0f;
+        emission.rateOverTime = emissionRate;
 
         var shape = ps.shape;
         shape.enabled = true;
@@ -94,20 +105,21 @@ public class StarfieldSpawner : MonoBehaviour
         noise.strength = 0.25f;
         noise.frequency = 0.15f;
 
-        // Add twinkle over lifetime
+        // Add retro arcade color mix + twinkle
         var col = ps.colorOverLifetime;
         col.enabled = true;
         var grad = new Gradient();
         grad.SetKeys(
             new[] {
-                new GradientColorKey(new Color(0.8f,0.9f,1f), 0f),
-                new GradientColorKey(new Color(1f,1f,1f), 0.5f),
-                new GradientColorKey(new Color(0.8f,0.9f,1f), 1f),
+                new GradientColorKey(colorA, 0f),
+                new GradientColorKey(colorB, 0.28f),
+                new GradientColorKey(colorC, 0.62f),
+                new GradientColorKey(colorD, 1f),
             },
             new[] {
-                new GradientAlphaKey(0.15f, 0f),
+                new GradientAlphaKey(0.10f, 0f),
                 new GradientAlphaKey(0.95f, 0.5f),
-                new GradientAlphaKey(0.15f, 1f),
+                new GradientAlphaKey(0.10f, 1f),
             }
         );
         col.color = grad;
@@ -127,7 +139,7 @@ public class StarfieldSpawner : MonoBehaviour
         renderer.velocityScale = 0.2f;
 
         ps.Clear();
-        ps.Emit(count);
+        ps.Simulate(lifetime, withChildren: false, restart: true, fixedTimeStep: true);
         ps.Play();
     }
 }

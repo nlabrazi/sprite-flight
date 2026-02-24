@@ -40,12 +40,14 @@ public class PlayerController : MonoBehaviour
     private float elapsedTime;
     private int currentScore;
     private bool isDead;
+    private bool isPaused;
 
     // Legacy high score key
     private const string HIGH_SCORE_KEY = "HIGH_SCORE";
 
     private void Awake()
     {
+        Time.timeScale = 1f;
         rb = GetComponent<Rigidbody2D>();
         SetupAudioSources();
         SetupUI();
@@ -56,12 +58,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnDestroy()
     {
-        gameUI?.UnbindEvents(ReloadScene, GoToMainMenu, SaveTop10, SkipTop10);
+        gameUI?.UnbindEvents(ResumeGameFromButton, ReloadScene, GoToMainMenu, SaveTop10, SkipTop10);
     }
 
     private void Update()
     {
         if (isDead) return;
+        if (WasPausePressedThisFrame()) TogglePause();
+        if (isPaused) return;
 
         UpdateScore();
         MoveRocket();
@@ -150,18 +154,21 @@ public class PlayerController : MonoBehaviour
     // Reload the current scene
     private void ReloadScene()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // Return to the main menu scene
     private void GoToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
     // Save score and return to menu
     private void SaveTop10()
     {
+        Time.timeScale = 1f;
         string name = gameUI != null ? gameUI.GetPlayerNameOrDefault("AAA") : "AAA";
         ScoreboardManager.AddScore(name, currentScore);
         SceneManager.LoadScene(mainMenuSceneName);
@@ -196,7 +203,7 @@ public class PlayerController : MonoBehaviour
 
         var root = uiDocument.rootVisualElement;
         gameUI = new PlayerGameUI(root);
-        gameUI.BindEvents(ReloadScene, GoToMainMenu, SaveTop10, SkipTop10);
+        gameUI.BindEvents(ResumeGameFromButton, ReloadScene, GoToMainMenu, SaveTop10, SkipTop10);
     }
 
     // Update rocket flame state from thrust events
@@ -214,5 +221,49 @@ public class PlayerController : MonoBehaviour
         int legacy = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
         int top10 = ScoreboardManager.GetBestScore();
         return Mathf.Max(legacy, top10);
+    }
+
+    // Check pause input from gamepad start or keyboard escape
+    private static bool WasPausePressedThisFrame()
+    {
+        bool gamepadPause = Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame;
+        bool keyboardPause = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+        return gamepadPause || keyboardPause;
+    }
+
+    // Toggle pause state
+    private void TogglePause()
+    {
+        if (isPaused) ResumeGame();
+        else PauseGame();
+    }
+
+    // Pause gameplay and show action buttons
+    private void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+        thrustSource.Stop();
+        if (rocketFlame != null) rocketFlame.SetActive(false);
+
+        gameUI?.HideNameEntry();
+        gameUI?.SetHudVisible(false);
+        gameUI?.ShowPauseButtons(true);
+    }
+
+    // Resume gameplay and hide pause buttons
+    private void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        gameUI?.ShowPauseButtons(false);
+        gameUI?.SetHudVisible(true);
+    }
+
+    // Resume gameplay from pause menu button
+    private void ResumeGameFromButton()
+    {
+        if (!isPaused) return;
+        ResumeGame();
     }
 }
