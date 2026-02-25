@@ -238,7 +238,33 @@ public class PlayerController : MonoBehaviour
     {
         bool gamepadPause = Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame;
         bool keyboardPause = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
-        return gamepadPause || keyboardPause;
+        bool touchPause = WasMobilePausePressedThisFrame();
+        return gamepadPause || keyboardPause || touchPause;
+    }
+
+    // Pause on two-finger touch start for mobile/web touch devices
+    private static bool WasMobilePausePressedThisFrame()
+    {
+        if (Touchscreen.current == null)
+            return false;
+
+        int activeTouches = 0;
+        bool startedTouchThisFrame = false;
+
+        foreach (var touch in Touchscreen.current.touches)
+        {
+            if (!touch.press.isPressed)
+                continue;
+
+            activeTouches++;
+            if (touch.press.wasPressedThisFrame)
+                startedTouchThisFrame = true;
+
+            if (activeTouches >= 2 && startedTouchThisFrame)
+                return true;
+        }
+
+        return false;
     }
 
     // Toggle pause state

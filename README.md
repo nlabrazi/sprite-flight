@@ -57,12 +57,18 @@ You control a spaceship and must survive as long as possible by dodging
 incoming obstacles while the difficulty ramps up over time.
 
 -   🚀 Arcade endless survival gameplay
--   🎮 Mouse + gamepad controls (Unity Input System)
+-   🎮 Mouse + gamepad + touch controls (Unity Input System)
 -   🔥 Rocket flame effects for feedback and style
 -   📈 Progressive difficulty (speed increases over time)
 -   🏆 Local Top 10 leaderboard
 -   🌌 Animated background particles to make the scene feel alive
 -   🕹️ Menus built with Unity UI Toolkit (Main Menu, High Scores, Quit)
+
+### 🎮 Controls
+
+-   Desktop: hold left mouse button to thrust toward the cursor
+-   Gamepad: use left stick to aim, hold A to thrust, press Start to pause
+-   Mobile/WebGL touch: touch + hold to thrust toward your finger, tap with 2 fingers to pause
 
 ---
 
@@ -72,7 +78,7 @@ incoming obstacles while the difficulty ramps up over time.
 -   🏆 Better persistence for high scores (clean save format + reset
     option)
 -   🛸 Multiple ships / skins
--   📱 Mobile touch controls (future)
+-   ✅ Mobile touch controls
 -   🌍 Online leaderboard (future)
 -   🧩 Power-ups (future)
 
