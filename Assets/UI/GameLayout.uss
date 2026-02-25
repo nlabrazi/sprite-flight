@@ -1,0 +1,138 @@
+/* In-game HUD root */
+.hud-root {
+    width: 100%;
+    height: 100%;
+}
+
+/* Shared HUD label style */
+.hud-label {
+    position: absolute;
+    top: 10px;
+    font-size: 22px;
+    -unity-font-style: bold;
+
+    color: rgb(240, 244, 255);
+    -unity-text-outline-color: rgba(0,0,0,0.85);
+    -unity-text-outline-width: 1px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
+    background-color: rgba(0,0,0,0.25);
+
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+
+    border-left-color: rgba(0, 255, 224, 0.35);
+    border-right-color: rgba(0, 255, 224, 0.35);
+    border-top-color: rgba(0, 255, 224, 0.35);
+    border-bottom-color: rgba(0, 255, 224, 0.35);
+}
+
+/* Top-left score label */
+.hud-left { left: 10px; }
+
+/* Top-right high score label */
+.hud-right { right: 10px; }
+
+/* Centered action button anchor */
+.hud-center {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    translate: -50% -50%;
+    margin-top: 0;
+}
+
+/* Restart button anchor */
+.restart-btn {
+    top: 55%;
+    translate: -50% -50px;
+}
+
+/* Main menu button offset */
+.menu-btn {
+    top: 55%;
+    translate: -50% 30px;
+    margin-top: 0;
+}
+
+/* Resume button offset */
+.resume-btn {
+    top: 55%;
+    translate: -50% -130px;
+    margin-top: 0;
+}
+
+/* Name entry panel */
+.name-panel {
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    translate: -50% -50%;
+
+    width: 560px;
+    padding-left: 22px;
+    padding-right: 22px;
+    padding-bottom: 22px;
+    padding-top: 18px;
+
+    background-color: rgba(8, 10, 18, 0.74);
+
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+
+    border-left-color: rgba(0, 255, 224, 0.65);
+    border-right-color: rgba(0, 255, 224, 0.65);
+    border-top-color: rgba(0, 255, 224, 0.65);
+    border-bottom-color: rgba(0, 255, 224, 0.65);
+
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+
+    align-items: center;
+}
+
+/* Name input field */
+.name-input {
+    width: 260px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Horizontal button row */
+.row {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Compact action button */
+.small-btn {
+    flex-grow: 1;
+    min-width: 0;
+    height: 48px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* Compact button class override */
+.ui-btn.small-btn {
+    min-width: 0;
+    flex-basis: 0;
+    flex-grow: 1;
+}

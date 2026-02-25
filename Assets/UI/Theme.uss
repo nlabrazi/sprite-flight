@@ -1,0 +1,135 @@
+/* Base panel */
+unity-panel {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* Fullscreen root container */
+.root {
+    width: 100%;
+    height: 100%;
+}
+
+/* Fullscreen background image */
+.bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-image-tint-color: rgba(210, 220, 255, 0.12);
+}
+
+/* Main centered content */
+.content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 14px;
+    padding-bottom: 12px;
+}
+
+/* Main title text */
+.title {
+    color: rgb(240, 244, 255);
+    font-size: 32px;
+    -unity-font-style: bold;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 1px;
+    margin-bottom: 8px;
+}
+
+/* Section title text */
+.subtitle {
+    color: rgb(240, 244, 255);
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 1px;
+    margin-bottom: 10px;
+}
+
+/* Default body text */
+.text {
+    color: rgb(240, 244, 255);
+    font-size: 18px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 1px;
+}
+
+/* Reusable card container */
+.ui-panel {
+    width: 560px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    background-color: rgba(8, 10, 18, 0.74);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(0, 255, 224, 0.65);
+    border-right-color: rgba(0, 255, 224, 0.65);
+    border-top-color: rgba(0, 255, 224, 0.65);
+    border-bottom-color: rgba(0, 255, 224, 0.65);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    align-items: center;
+}
+
+/* Reusable primary button */
+.ui-btn {
+    min-width: 280px;
+    height: 44px;
+    margin-top: 10px;
+    background-color: rgba(0, 0, 0, 0.65);
+    color: rgb(240, 244, 255);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(0, 255, 224, 0.65);
+    border-right-color: rgba(0, 255, 224, 0.65);
+    border-top-color: rgba(0, 255, 224, 0.65);
+    border-bottom-color: rgba(0, 255, 224, 0.65);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    -unity-font-style: bold;
+    font-size: 16px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.85);
+    -unity-text-outline-width: 1px;
+}
+
+/* Primary button hover state */
+.ui-btn:hover {
+    border-left-color: rgba(255, 64, 216, 0.75);
+    border-right-color: rgba(255, 64, 216, 0.75);
+    border-top-color: rgba(255, 64, 216, 0.75);
+    border-bottom-color: rgba(255, 64, 216, 0.75);
+}
+
+/* Gamepad selection state (same look as hover) */
+.ui-btn.is-hovered {
+    border-left-color: rgba(255, 64, 216, 0.75);
+    border-right-color: rgba(255, 64, 216, 0.75);
+    border-top-color: rgba(255, 64, 216, 0.75);
+    border-bottom-color: rgba(255, 64, 216, 0.75);
+}
+
+/* Primary button active state */
+.ui-btn:active {
+    background-color: rgba(0, 255, 224, 0.10);
+}
+
+/* Utility class to hide elements */
+.is-hidden {
+    display: none;
+}
