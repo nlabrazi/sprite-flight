@@ -36,6 +36,11 @@ public class Obstacle : MonoBehaviour
     [SerializeField] private float minSpeed = 50f;
     [SerializeField] private float maxSpeed = 150f;
 
+    [Header("Difficulty Progression")]
+    [SerializeField, Min(0f)] private float speedRampPerMinute = 0.35f;
+    [SerializeField, Min(1f)] private float maxSpeedMultiplier = 2.5f;
+    [SerializeField, Min(0f)] private float speedAdjustRate = 8f;
+
     [Header("Rotation")]
     [SerializeField] private float maxSpinSpeed = 10f;
 
@@ -48,6 +53,8 @@ public class Obstacle : MonoBehaviour
 
     // Temporary boost state
     private bool isBoosting;
+    private float baseCruiseSpeed;
+    private Vector2 currentDirection = Vector2.right;
 
     // Cached components
     private Rigidbody2D rb;
@@ -70,6 +77,23 @@ public class Obstacle : MonoBehaviour
         ApplySizeAndSprite();
         ApplyRandomMovement();
         ApplyRandomSpin();
+    }
+
+    private void FixedUpdate()
+    {
+        if (rb == null || isBoosting)
+            return;
+
+        Vector2 velocity = rb.linearVelocity;
+        if (velocity.sqrMagnitude > 0.0001f)
+            currentDirection = velocity.normalized;
+
+        if (baseCruiseSpeed <= 0f)
+            baseCruiseSpeed = Mathf.Max(0.1f, velocity.magnitude);
+
+        float targetSpeed = baseCruiseSpeed * GetDifficultyMultiplier();
+        float nextSpeed = Mathf.MoveTowards(velocity.magnitude, targetSpeed, speedAdjustRate * Time.fixedDeltaTime);
+        rb.linearVelocity = currentDirection * nextSpeed;
     }
 
     // Pick asteroid size from weighted probabilities
@@ -160,6 +184,10 @@ public class Obstacle : MonoBehaviour
         float speed = Random.Range(minSpeed, maxSpeed) / size;
         Vector2 direction = Random.insideUnitCircle.normalized;
         rb.AddForce(direction * speed);
+
+        currentDirection = direction;
+        float fallbackStartSpeed = speed * Time.fixedDeltaTime;
+        baseCruiseSpeed = Mathf.Max(0.1f, rb.linearVelocity.magnitude, fallbackStartSpeed);
     }
 
     // Apply initial random angular velocity
@@ -201,5 +229,12 @@ public class Obstacle : MonoBehaviour
         rb.linearVelocity /= boostMultiplier;
 
         isBoosting = false;
+    }
+
+    private float GetDifficultyMultiplier()
+    {
+        float elapsedMinutes = Time.timeSinceLevelLoad / 60f;
+        float ramp = 1f + elapsedMinutes * speedRampPerMinute;
+        return Mathf.Clamp(ramp, 1f, maxSpeedMultiplier);
     }
 }

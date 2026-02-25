@@ -63,10 +63,20 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isDead) return;
-        if (WasPausePressedThisFrame()) TogglePause();
-        if (isPaused) return;
+        if (isDead)
+        {
+            gameUI?.TickNavigation(true);
+            return;
+        }
 
+        if (WasPausePressedThisFrame()) TogglePause();
+        if (isPaused)
+        {
+            gameUI?.TickNavigation(true);
+            return;
+        }
+
+        gameUI?.TickNavigation(false);
         UpdateScore();
         MoveRocket();
     }

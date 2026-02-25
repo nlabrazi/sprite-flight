@@ -7,6 +7,12 @@ using UnityEditor;
 
 public class MainMenuController : MonoBehaviour
 {
+    private enum MenuView
+    {
+        Main,
+        HighScores,
+    }
+
     [Header("Scenes")]
     [SerializeField] private string gameSceneName = "Game";
 
@@ -27,6 +33,8 @@ public class MainMenuController : MonoBehaviour
 
     // High scores list
     private ScrollView scoresScroll;
+    private UIMenuGamepadNavigator gamepadNavigator;
+    private MenuView currentView;
 
     private void Awake()
     {
@@ -44,6 +52,7 @@ public class MainMenuController : MonoBehaviour
         creditsButton = root.Q<Button>("CreditsButton");
 
         scoresScroll = root.Q<ScrollView>("ScoresScroll");
+        gamepadNavigator = new UIMenuGamepadNavigator();
 
         // Apply background image
         ApplyBackground(root);
@@ -57,6 +66,33 @@ public class MainMenuController : MonoBehaviour
         ShowMenu();
     }
 
+    private void Update()
+    {
+        if (gamepadNavigator == null)
+            return;
+
+        gamepadNavigator.TickNavigation();
+
+        if (UIMenuGamepadNavigator.WasCancelPressedThisFrame() && currentView == MenuView.HighScores)
+        {
+            ShowMenu();
+            return;
+        }
+
+        if (!UIMenuGamepadNavigator.WasSubmitPressedThisFrame())
+            return;
+
+        var selected = gamepadNavigator.CurrentButton;
+        if (selected == null)
+            return;
+
+        if (selected == playButton) OnPlay();
+        else if (selected == highScoresButton) ShowHighScores();
+        else if (selected == quitButton) OnQuit();
+        else if (selected == backButton) ShowMenu();
+        else if (selected == creditsButton) OpenCredits();
+    }
+
     private void OnDestroy()
     {
         if (playButton != null) playButton.clicked -= OnPlay;
@@ -64,6 +100,8 @@ public class MainMenuController : MonoBehaviour
         if (quitButton != null) quitButton.clicked -= OnQuit;
         if (backButton != null) backButton.clicked -= ShowMenu;
         if (creditsButton != null) creditsButton.clicked -= OpenCredits;
+
+        gamepadNavigator?.Clear();
     }
 
     private void ApplyBackground(VisualElement root)
@@ -102,6 +140,10 @@ public class MainMenuController : MonoBehaviour
         if (gameTitle != null) gameTitle.text = "SPRITE FLIGHT";
         if (menuPanel != null) menuPanel.style.display = DisplayStyle.Flex;
         if (highScoresPanel != null) highScoresPanel.style.display = DisplayStyle.None;
+        if (creditsButton != null) creditsButton.style.display = DisplayStyle.Flex;
+
+        currentView = MenuView.Main;
+        RefreshNavigation(resetSelection: true);
     }
 
     private void ShowHighScores()
@@ -109,8 +151,12 @@ public class MainMenuController : MonoBehaviour
         if (gameTitle != null) gameTitle.text = "SCOREBOARD";
         if (menuPanel != null) menuPanel.style.display = DisplayStyle.None;
         if (highScoresPanel != null) highScoresPanel.style.display = DisplayStyle.Flex;
+        if (creditsButton != null) creditsButton.style.display = DisplayStyle.None;
 
         RenderTop10();
+
+        currentView = MenuView.HighScores;
+        RefreshNavigation(resetSelection: true);
     }
 
     // Refresh high scores content
@@ -136,5 +182,19 @@ public class MainMenuController : MonoBehaviour
 
         // Start at the top of the list
         scoresScroll.scrollOffset = Vector2.zero;
+    }
+
+    private void RefreshNavigation(bool resetSelection)
+    {
+        if (gamepadNavigator == null)
+            return;
+
+        if (currentView == MenuView.HighScores)
+        {
+            gamepadNavigator.SetButtons(new[] { backButton }, resetSelection);
+            return;
+        }
+
+        gamepadNavigator.SetButtons(new[] { playButton, highScoresButton, quitButton, creditsButton }, resetSelection);
     }
 }

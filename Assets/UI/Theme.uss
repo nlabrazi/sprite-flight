@@ -116,6 +116,14 @@ unity-panel {
     border-bottom-color: rgba(255, 64, 216, 0.75);
 }
 
+/* Gamepad selection state (same look as hover) */
+.ui-btn.is-hovered {
+    border-left-color: rgba(255, 64, 216, 0.75);
+    border-right-color: rgba(255, 64, 216, 0.75);
+    border-top-color: rgba(255, 64, 216, 0.75);
+    border-bottom-color: rgba(255, 64, 216, 0.75);
+}
+
 /* Primary button active state */
 .ui-btn:active {
     background-color: rgba(0, 255, 224, 0.10);

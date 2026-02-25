@@ -11,7 +11,7 @@
                 <ui:Button text="Quit" name="QuitButton" class="ui-btn menu-button"/>
             </ui:VisualElement>
             <ui:VisualElement name="HighScoresPanel" class="ui-panel highscores-panel is-hidden" style="display: none; height: 45%; max-height: 400px; min-height: 200px;">
-                <ui:VisualElement name="HighScoresBody" class="highscores-body" style="display: flex; height: 200px; min-height: 185px; max-height: 200px;">
+                <ui:VisualElement name="HighScoresBody" class="highscores-body" style="display: flex; height: 200px; min-height: 185px; max-height: 200px; bottom: -10px;">
                     <ui:ScrollView name="ScoresScroll" class="scores-list" style="min-height: 150px; max-height: 150px; height: 150px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="HighScoresFooter" class="highscores-footer" style="top: 5px; display: flex;">
