@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 #if UNITY_EDITOR
@@ -18,6 +19,10 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Background")]
     [SerializeField] private Sprite backgroundSprite;
+
+    [Header("High Scores Scroll")]
+    [SerializeField, Min(0f)] private float gamepadScrollSpeed = 700f;
+    [SerializeField, Range(0.05f, 1f)] private float gamepadScrollDeadzone = 0.2f;
 
     // Menu containers
     private VisualElement menuPanel;
@@ -72,6 +77,7 @@ public class MainMenuController : MonoBehaviour
             return;
 
         gamepadNavigator.TickNavigation();
+        TickHighScoresScroll();
 
         if (UIMenuGamepadNavigator.WasCancelPressedThisFrame() && currentView == MenuView.HighScores)
         {
@@ -196,5 +202,34 @@ public class MainMenuController : MonoBehaviour
         }
 
         gamepadNavigator.SetButtons(new[] { playButton, highScoresButton, quitButton, creditsButton }, resetSelection);
+    }
+
+    private void TickHighScoresScroll()
+    {
+        if (currentView != MenuView.HighScores || scoresScroll == null || Gamepad.current == null)
+            return;
+
+        float stickY = Gamepad.current.rightStick.ReadValue().y;
+        if (Mathf.Abs(stickY) < gamepadScrollDeadzone)
+            return;
+
+        float deltaY = -stickY * gamepadScrollSpeed * Time.unscaledDeltaTime;
+        float maxY = GetScoresScrollMaxY();
+
+        Vector2 nextOffset = scoresScroll.scrollOffset;
+        float rawY = nextOffset.y + deltaY;
+        nextOffset.y = float.IsPositiveInfinity(maxY)
+            ? Mathf.Max(0f, rawY)
+            : Mathf.Clamp(rawY, 0f, maxY);
+
+        scoresScroll.scrollOffset = nextOffset;
+    }
+
+    private float GetScoresScrollMaxY()
+    {
+        if (scoresScroll?.verticalScroller == null)
+            return float.PositiveInfinity;
+
+        return Mathf.Max(0f, scoresScroll.verticalScroller.highValue);
     }
 }
