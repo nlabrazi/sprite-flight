@@ -2,12 +2,20 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 public class MainMenuController : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern void TryCloseBrowserWindow();
+#endif
+
     private enum MenuView
     {
         Main,
@@ -40,11 +48,13 @@ public class MainMenuController : MonoBehaviour
     private ScrollView scoresScroll;
     private UIMenuGamepadNavigator gamepadNavigator;
     private MenuView currentView;
+    private UISafeAreaApplier safeAreaApplier;
 
     private void Awake()
     {
         var doc = GetComponent<UIDocument>();
         var root = doc.rootVisualElement;
+        safeAreaApplier = new UISafeAreaApplier(root, "SafeArea");
 
         menuPanel = root.Q<VisualElement>("MenuPanel");
         highScoresPanel = root.Q<VisualElement>("HighScoresPanel");
@@ -73,6 +83,8 @@ public class MainMenuController : MonoBehaviour
 
     private void Update()
     {
+        safeAreaApplier?.ApplyIfChanged();
+
         if (gamepadNavigator == null)
             return;
 
@@ -130,9 +142,13 @@ public class MainMenuController : MonoBehaviour
 
     private void OnQuit()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        TryCloseBrowserWindow();
+#else
         Application.Quit();
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
+#endif
 #endif
     }
 

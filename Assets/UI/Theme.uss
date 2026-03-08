@@ -9,6 +9,15 @@ unity-panel {
     height: 100%;
 }
 
+/* Container used to apply mobile safe-area padding */
+.safe-area {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
 /* Fullscreen background image */
 .bg {
     position: absolute;

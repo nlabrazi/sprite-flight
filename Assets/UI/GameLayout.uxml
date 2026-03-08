@@ -2,17 +2,21 @@
     <Style src="project://database/Assets/UI/Theme.uss?fileID=7433441132597879392&amp;guid=cb63a9a4ca481894f8888bf367da3ca6&amp;type=3#Theme"/>
     <Style src="project://database/Assets/UI/GameLayout.uss?fileID=7433441132597879392&amp;guid=cbe1457a2e932f94fa6542612dd378ee&amp;type=3#GameLayout"/>
     <ui:VisualElement name="HudRoot" class="hud-root">
-        <ui:Label text="Score: 0" name="ScoreText" class="hud-label hud-left"/>
-        <ui:Label text="High Score: 0" name="HighScoreText" class="hud-label hud-right"/>
-        <ui:Button text="Resume" name="ResumeButton" class="ui-btn hud-center resume-btn"/>
-        <ui:Button text="Restart" name="RestartButton" class="ui-btn hud-center restart-btn"/>
-        <ui:Button text="Main Menu" name="MainMenuButton" class="ui-btn hud-center menu-btn"/>
-        <ui:VisualElement name="NamePanel" class="name-panel is-hidden">
-            <ui:Label text="TOP 10! ENTER YOUR NAME" name="NameTitle" class="subtitle"/>
-            <ui:TextField name="NameInput" value="AAA" class="name-input"/>
-            <ui:VisualElement class="row">
-                <ui:Button text="Save" name="SaveScoreButton" class="ui-btn small-btn"/>
-                <ui:Button text="Skip" name="SkipSaveButton" class="ui-btn small-btn"/>
+        <ui:VisualElement name="SafeArea" class="safe-area">
+            <ui:Label text="Score: 0" name="ScoreText" class="hud-label hud-left"/>
+            <ui:Label text="High Score: 0" name="HighScoreText" class="hud-label hud-right"/>
+            <ui:VisualElement name="ActionButtons" class="hud-center action-stack">
+                <ui:Button text="Resume" name="ResumeButton" class="ui-btn resume-btn"/>
+                <ui:Button text="Restart" name="RestartButton" class="ui-btn restart-btn"/>
+                <ui:Button text="Main Menu" name="MainMenuButton" class="ui-btn menu-btn"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="NamePanel" class="name-panel is-hidden">
+                <ui:Label text="TOP 10! ENTER YOUR NAME" name="NameTitle" class="subtitle"/>
+                <ui:TextField name="NameInput" value="AAA" class="name-input"/>
+                <ui:VisualElement class="row">
+                    <ui:Button text="Save" name="SaveScoreButton" class="ui-btn small-btn"/>
+                    <ui:Button text="Skip" name="SkipSaveButton" class="ui-btn small-btn"/>
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

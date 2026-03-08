@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     // Core components
     private Rigidbody2D rb;
     private PlayerGameUI gameUI;
+    private UISafeAreaApplier safeAreaApplier;
 
     // Audio sources
     private AudioSource explosionSource;
@@ -63,13 +64,20 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        safeAreaApplier?.ApplyIfChanged();
+
         if (isDead)
         {
             gameUI?.TickNavigation(true);
             return;
         }
 
-        if (WasPausePressedThisFrame()) TogglePause();
+        if (WasPausePressedThisFrame())
+        {
+            TogglePause();
+            return;
+        }
+
         if (isPaused)
         {
             gameUI?.TickNavigation(true);
@@ -212,6 +220,7 @@ public class PlayerController : MonoBehaviour
         if (uiDocument == null) return;
 
         var root = uiDocument.rootVisualElement;
+        safeAreaApplier = new UISafeAreaApplier(root, "SafeArea");
         gameUI = new PlayerGameUI(root);
         gameUI.BindEvents(ResumeGameFromButton, ReloadScene, GoToMainMenu, SaveTop10, SkipTop10);
     }
