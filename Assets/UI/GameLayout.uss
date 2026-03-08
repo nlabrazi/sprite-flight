@@ -44,32 +44,31 @@
 /* Top-right high score label */
 .hud-right { right: 10px; }
 
-/* Centered action button anchor */
+/* Centered action stack anchor */
 .hud-center {
     position: absolute;
     left: 50%;
-    top: 55%;
+    top: 50%;
     translate: -50% -50%;
     margin-top: 0;
 }
 
-/* Restart button anchor */
-.restart-btn {
-    top: 55%;
-    translate: -50% -50px;
+/* Pause/game over button stack */
+.action-stack {
+    width: 92%;
+    max-width: 360px;
+    min-width: 0;
+    align-items: stretch;
 }
 
-/* Main menu button offset */
-.menu-btn {
-    top: 55%;
-    translate: -50% 30px;
-    margin-top: 0;
+/* Full-width button behavior inside stack */
+.action-stack .ui-btn {
+    width: 100%;
+    min-width: 0;
 }
 
-/* Resume button offset */
-.resume-btn {
-    top: 55%;
-    translate: -50% -130px;
+/* Remove first-button top margin inherited from theme */
+.action-stack .resume-btn {
     margin-top: 0;
 }
 
@@ -77,10 +76,12 @@
 .name-panel {
     position: absolute;
     left: 50%;
-    top: 44%;
+    top: 48%;
     translate: -50% -50%;
 
-    width: 560px;
+    width: 92%;
+    max-width: 560px;
+    min-width: 0;
     padding-left: 22px;
     padding-right: 22px;
     padding-bottom: 22px;
@@ -108,7 +109,9 @@
 
 /* Name input field */
 .name-input {
-    width: 260px;
+    width: 100%;
+    max-width: 260px;
+    min-width: 0;
     margin-top: 10px;
     margin-bottom: 10px;
 }

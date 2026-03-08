@@ -3,22 +3,24 @@
     <Style src="project://database/Assets/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=3dd6be8b3da7ae147952c1ceed010e9e&amp;type=3#MainMenu"/>
     <ui:VisualElement name="Root" class="root">
         <ui:VisualElement name="Background" class="bg"/>
-        <ui:VisualElement name="Content" class="content">
-            <ui:Label text="SPRITE FLIGHT" name="GameTitle" class="title"/>
-            <ui:VisualElement name="MenuPanel" class="ui-panel menu-panel" style="display: flex;">
-                <ui:Button text="Play" name="PlayButton" class="ui-btn menu-button"/>
-                <ui:Button text="High Scores" name="HighScoresButton" class="ui-btn menu-button"/>
-                <ui:Button text="Quit" name="QuitButton" class="ui-btn menu-button"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="HighScoresPanel" class="ui-panel highscores-panel is-hidden" style="display: none; height: 45%; max-height: 400px; min-height: 200px;">
-                <ui:VisualElement name="HighScoresBody" class="highscores-body" style="display: flex; height: 200px; min-height: 185px; max-height: 200px; bottom: -10px;">
-                    <ui:ScrollView name="ScoresScroll" class="scores-list" style="min-height: 150px; max-height: 150px; height: 150px;"/>
+        <ui:VisualElement name="SafeArea" class="safe-area">
+            <ui:VisualElement name="Content" class="content">
+                <ui:Label text="SPRITE FLIGHT" name="GameTitle" class="title"/>
+                <ui:VisualElement name="MenuPanel" class="ui-panel menu-panel">
+                    <ui:Button text="Play" name="PlayButton" class="ui-btn menu-button"/>
+                    <ui:Button text="High Scores" name="HighScoresButton" class="ui-btn menu-button"/>
+                    <ui:Button text="Quit" name="QuitButton" class="ui-btn menu-button"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="HighScoresFooter" class="highscores-footer" style="top: 5px; display: flex;">
-                    <ui:Button text="Back" name="BackButton" class="ui-btn menu-button"/>
+                <ui:VisualElement name="HighScoresPanel" class="ui-panel highscores-panel is-hidden">
+                    <ui:VisualElement name="HighScoresBody" class="highscores-body">
+                        <ui:ScrollView name="ScoresScroll" class="scores-list"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="HighScoresFooter" class="highscores-footer">
+                        <ui:Button text="Back" name="BackButton" class="ui-btn menu-button"/>
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
+            <ui:Button text="Credits" name="CreditsButton" class="ui-btn credits-btn"/>
         </ui:VisualElement>
-        <ui:Button text="Credits" name="CreditsButton" class="ui-btn credits-btn"/>
     </ui:VisualElement>
 </ui:UXML>
